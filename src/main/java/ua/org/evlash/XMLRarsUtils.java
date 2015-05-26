@@ -6,11 +6,13 @@ import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.util.ArrayList;
 
 public class XMLRarsUtils {
     public static Object parsDOM(String filePath) throws Exception{
@@ -38,21 +40,32 @@ public class XMLRarsUtils {
 
         return null;
     }
-    public static Object marshallingJAXB(String filePath) throws Exception {
+    public static Object marshallingJAXB(String filePath, Country file) throws Exception {
         JAXBContext jaxbContext = JAXBContext.newInstance(Country.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 // for getting nice formatted output добавим свойство, которое выдаст нам читабелный формат в результате
-        jaxbMarshaller. setProperty(Marshaller.JAXB_FORMATTED_0UTPUT, Boolean.TRUE);
+        jaxbMarshaller. setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         File XMLfile = new File(filePath);
 // Пишем в XML файл
-        jaxbMarshaller.marshal(countrylndia, XMLfile);
+        jaxbMarshaller.marshal(file, XMLfile);
 // Пишем в консоль
-        jaxbMarshaller.marshal(countrylndia. System.out);
+        jaxbMarshaller.marshal(file, System.out);
     return null;
 
     }
-    public static Object unmarshallingJAXB(String filePath) throws Exception {
+    public static Country unmarshallingJAXB(String filePath) throws Exception {
+// Создаем JAXB контекст инициализируем маршалер
+        JAXBContext jaxbContext = JAXBContext.newInstance(Country.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        File XMLfile = new File(filePath);
 
-        return null;
+        Country country = (Country) jaxbUnmarshaller.unmarshal(XMLfile);
+        System.out.println("Country Name: " + country.getCountryName());
+        System.out.println("Country Population: " + country.getCountryPopulation());
+        ArrayList<State> listOfStates = country.getListOfStates();
+        for (State state : listOfStates) {
+            System.out.println("State: " + state.getStateName());
+        }
+        return country;
     }
 }
